@@ -1,0 +1,47 @@
+body {
+    display            :flex;
+    min-height         :100vh;
+    font-family        :Arial, sans-serif;
+    justify-content    :center;
+    background-color   :#333;
+}
+.container {
+    display            :block;
+    align-items        :center;
+}
+.display {
+    width              :400px;
+    border             :1px solid #ccc;
+    height             :550px;
+    margin             :25px;
+    display            :flex;
+    /*sets the item of the div to be at the bottom*/
+    align-items        :center;/*centers items horizontally*/
+    flex-direction     :column; /*stacks items vertically*/    
+    justify-content    :center;/*centers the content of the div*/
+    background-size    :cover;
+    background-image   :url('../images/start2.jpg');
+}
+.pushable {
+    background: hsl(340deg 100% 32%);
+    border-radius: 12px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline-offset: 4px;
+    margin-bottom     : 40px;
+    /* adds space of 40px between the button and the div*/ 
+
+}
+.front {
+    display: block;
+    padding: 12px 42px;
+    border-radius: 12px;
+    font-size: 1.25rem;
+    background: hsl(345deg 100% 47%);
+    color: white;
+    transform: translateY(-6px);
+}
+.pushable:active .front {
+   transform: translateY(-2px);
+}

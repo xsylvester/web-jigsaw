@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <title>game</title>
+    <style>
+    body {
+        height           :100vh;
+        display          :flex;
+        align-items      :center;
+        justify-content  :center;
+        background-color :#2b282f;
+    }
+    </style>
+    <script>
+    let image       = new Image();
+    let width       = 90;
+    let height      = 90;
+    let sprites     = [];
+    let image_index = 1;
+    let sprites_grid= [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+                       14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 ];
+    let image_path  = ["001.webp", "002.webp", "003.webp", "004.webp"];
+    
+    function shuffle(arr1, arr2) {
+        for (let i=arr1.length-1; i>0; i--) {
+            const j  = Math.floor(Math.random()*(i+1));
+            let temp = arr1[i];
+            arr1[i]  = arr1[j];//swapping values
+            arr1[j]  = temp;
+            temp     = arr2[i];
+            arr2[i]  = arr2[j];
+            arr2[j]  = temp;
+        }
+        // set all images into a 5X5 grid
+        let sprites = [[], [], [], [], []];  //each array represents each row
+        let sprites_pos = [[], [], [], [], []];
+        let index     = -1; //cos the first mod turns it to 0
+        for (let i=0; i<25; i++) {
+            if(i%5==0){
+                index += 1;
+            }
+            sprites[index].push(arr1[i]);//populating the grid
+            sprites_pos[index].push(arr2[i]);
+        }
+        return [sprites, sprites_pos];
+    }
+    function getImageData(src) {
+        return new Promise((resolve, reject) => {
+            let x          = 0;  
+            let y          = 0;
+            image.src      = `../static/images/assets/${src}`;   
+            image.onload = function() {     
+            let canvas     = document.createElement("canvas");
+            canvas.width   = 450;
+            canvas.height  = 450;
+            let ctx        = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0);
+            for (let i = 0; i < 25; i++) {
+                //console.log(`x: ${x}, y: ${y} dx: ${dx} dy: ${dy}`);
+                sprites.push(ctx.getImageData(x, y, 90, 90));       
+                x += 90;
+                if (x == 450) {
+                    x = 0;
+                    y += 90;
+                }
+            }
+            //console.log(typeof(sprites[0] == "ImageData") == true);
+            // free some memory
+            x, y, ctx, canvas = null;
+            resolve(); // Resolve the promise when done
+            };
+            image.onerror = reject;
+        })
+    }
+  </script>
+  </head>
+  
+  <body>
+    <script>
+    window.onload = function load() {
+        getImageData(image_path[image_index]).then(() => {
+            // assigning two variables
+            [sprites, sprites_grid] = shuffle(sprites, sprites_grid);
+            runGame();
+        });
+    };
+    </script>
+    <canvas id="canvas" width="458" height="458"></canvas>
+    <script>
+    //constants
+    const canvas    = document.getElementById("canvas");
+    canvas.style.backgroundColor   = "#030303";
+    const ctx       = canvas.getContext("2d");
+    function blitImage() {
+        //image.src  = `../static/images/assets/${src}`;
+        //console.log("../images/assets/" + src);
+        let x = 0, y = 0, dx = 0, dy = 0, index=-1;
+        for (let i=0; i<25; i++) {
+            //console.log(`x: ${x}, y: ${y} dx: ${dx} dy: ${dy}`);
+            if(i%5==0){
+                index += 1;//here's the reason for index = -1
+            }
+            ctx.putImageData(sprites[index][i%5], x+dx, y+dy);         
+            x += width;
+            dx += 2;
+            if (x == 450) {
+                x = 0;
+                dx = 0;
+                y += height;
+                dy += 2;
+            }
+        }
+    }
+    function runGame() {
+        blitImage();
+    }
+    </script>
+  </body>
+  <script src="../static/js/game.js"></script>
+</html>
